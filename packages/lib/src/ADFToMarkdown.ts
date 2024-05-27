@@ -91,6 +91,9 @@ function renderADFContent(
 		case "text": {
 			return renderTextMarks(element);
 		}
+		case "softBreak": {
+			return " ";
+		}
 		case "hardBreak": {
 			return "\n";
 		}
