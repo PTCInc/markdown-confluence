@@ -2,6 +2,7 @@ import { traverse } from "@atlaskit/adf-utils/traverse";
 import { JSONDocNode } from "@atlaskit/editor-json-transformer";
 import { ADFProcessingPlugin, PublisherFunctions } from "./types";
 import { ADFEntity } from "@atlaskit/adf-utils/types";
+import { ConfluenceAdfFile } from "src/Publisher";
 
 export interface JiraLink {
 	issueId: string;
@@ -10,7 +11,7 @@ export interface JiraLink {
 export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 	constructor(private jiraUrl: string) {}
 
-	extract(_adf: JSONDocNode): string {
+	extract(adfFile: ConfluenceAdfFile): string {
 		return "no-op";
 	}
 

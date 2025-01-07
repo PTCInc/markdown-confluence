@@ -4,6 +4,7 @@ import { JSONDocNode } from "@atlaskit/editor-json-transformer";
 import { ADFProcessingPlugin, PublisherFunctions } from "./types";
 import { ADFEntity } from "@atlaskit/adf-utils/types";
 import SparkMD5 from "spark-md5";
+import { ConfluenceAdfFile } from "src/Publisher";
 
 export function getMermaidFileName(mermaidContent: string | undefined) {
 	const mermaidText = mermaidContent ?? "flowchart LR\nid1[Missing Chart]";
@@ -30,9 +31,9 @@ export class MermaidRendererPlugin
 {
 	constructor(private mermaidRenderer: MermaidRenderer) {}
 
-	extract(adf: JSONDocNode): ChartData[] {
+	extract(adfFile: ConfluenceAdfFile): ChartData[] {
 		const mermaidNodes = filter(
-			adf,
+			adfFile.contents,
 			(node) =>
 				node.type == "codeBlock" &&
 				(node.attrs || {})?.["language"] === "mermaid",

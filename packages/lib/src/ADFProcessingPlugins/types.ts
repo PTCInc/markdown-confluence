@@ -6,6 +6,7 @@ import {
 } from "../Attachments";
 import { JSONDocNode } from "@atlaskit/editor-json-transformer";
 import { LoaderAdaptor, RequiredConfluenceClient } from "../adaptors";
+import { ConfluenceAdfFile } from "src/Publisher";
 
 export interface PublisherFunctions {
 	uploadBuffer(
@@ -16,7 +17,10 @@ export interface PublisherFunctions {
 }
 
 export interface ADFProcessingPlugin<E, T> {
-	extract(adf: JSONDocNode, supportFunctions: PublisherFunctions): E;
+	extract(
+		adfFile: ConfluenceAdfFile,
+		supportFunctions: PublisherFunctions,
+	): E;
 	transform(items: E, supportFunctions: PublisherFunctions): Promise<T>;
 	load(
 		adf: JSONDocNode,
@@ -66,12 +70,12 @@ export function createPublisherFunctions(
 
 export async function executeADFProcessingPipeline(
 	plugins: ADFProcessingPlugin<unknown, unknown>[],
-	adf: JSONDocNode,
+	adfFile: ConfluenceAdfFile,
 	supportFunctions: PublisherFunctions,
 ): Promise<JSONDocNode> {
 	// Extract data in parallel
 	const extractedData = plugins.map((plugin) =>
-		plugin.extract(adf, supportFunctions),
+		plugin.extract(adfFile, supportFunctions),
 	);
 
 	// Transform data in parallel
@@ -84,7 +88,7 @@ export async function executeADFProcessingPipeline(
 	// Load transformed data synchronously using reduce
 	const finalADF = plugins.reduce((accADF, plugin, index) => {
 		return plugin.load(accADF, transformedData[index], supportFunctions);
-	}, adf);
+	}, adfFile.contents);
 
 	return finalADF;
 }

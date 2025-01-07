@@ -241,7 +241,7 @@ export class Publisher {
 		);
 		const adfToUpload = await executeADFProcessingPipeline(
 			this.adfProcessingPlugins,
-			adfFile.contents,
+			adfFile,
 			supportFunctions,
 		);
 

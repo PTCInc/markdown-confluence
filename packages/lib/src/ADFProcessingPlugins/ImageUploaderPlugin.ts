@@ -4,14 +4,15 @@ import { JSONDocNode } from "@atlaskit/editor-json-transformer";
 import { ADFEntity } from "@atlaskit/adf-utils/dist/types/types";
 import { p } from "@atlaskit/adf-utils/builders";
 import { ADFProcessingPlugin, PublisherFunctions } from "./types";
+import { ConfluenceAdfFile } from "src/Publisher";
 
 export const ImageUploaderPlugin: ADFProcessingPlugin<
 	string[],
 	Record<string, UploadedImageData | null>
 > = {
-	extract(adf: JSONDocNode): string[] {
+	extract(adfFile: ConfluenceAdfFile): string[] {
 		const mediaNodes = filter(
-			adf,
+			adfFile.contents,
 			(node) =>
 				node.type === "media" &&
 				(node.attrs || {})?.["type"] === "file",
