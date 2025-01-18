@@ -13,6 +13,7 @@ permissions:
 jobs:
   oss:
     runs-on: ubuntu-latest
+    if: github.repository == 'markdown-confluence/markdown-confluence'
     permissions:
       actions: read
       contents: read
