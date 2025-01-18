@@ -21,7 +21,7 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
     - name: Latest NPM
       run: |
-        npm install --loglevel verbose.
+        npm install --loglevel verbose
         find . -name node_modules
         ls
         pwd
