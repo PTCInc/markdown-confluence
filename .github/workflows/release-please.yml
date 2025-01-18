@@ -15,6 +15,7 @@ env:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    if: github.repository == 'markdown-confluence/markdown-confluence'
     outputs:
       CurrentVersion: ${{ steps.releaseassets.outputs.CurrentVersion }}
     permissions:
