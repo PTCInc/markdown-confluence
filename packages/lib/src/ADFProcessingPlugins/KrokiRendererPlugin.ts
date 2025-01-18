@@ -52,8 +52,8 @@ export class KrokiRendererPlugin
 		return imageMap;
 	}
 	load(
-		adf: JSONDocNode,
-		imageMap: Record<string, UploadedImageData | null>,
+		_adf: JSONDocNode,
+		_imageMap: Record<string, UploadedImageData | null>,
 	): JSONDocNode {
 		throw "l not implemented yet";
 	}

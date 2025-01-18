@@ -11,7 +11,7 @@ export interface JiraLink {
 export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 	constructor(private jiraUrl: string) {}
 
-	extract(adfFile: ConfluenceAdfFile): string {
+	extract(_adfFile: ConfluenceAdfFile): string {
 		return "no-op";
 	}
 
