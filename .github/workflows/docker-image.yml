@@ -17,11 +17,11 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3.8.1
       with:
-        node-version: "16.x"
+        node-version: "20.18"
         registry-url: 'https://registry.npmjs.org'
     - name: Latest NPM
       run: |
-        npm install -g npm@9.6.5
+        npm install --loglevel verbose.
         find . -name node_modules
         ls
         pwd
