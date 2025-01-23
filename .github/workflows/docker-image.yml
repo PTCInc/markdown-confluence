@@ -4,7 +4,7 @@ on:
   push
 
 env:
-  PRIV_REGISTRY: sandbox.acr.io
+  PRIV_REGISTRY: sandboxregistry.acr.io
 
 jobs:
 
