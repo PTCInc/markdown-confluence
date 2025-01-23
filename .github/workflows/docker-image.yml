@@ -3,6 +3,9 @@ name: Docker Image CI
 on:
   push
 
+env:
+  PRIV_REGISTRY: ${{ env.PRIV_REGISTRY }}
+
 jobs:
 
   build:
