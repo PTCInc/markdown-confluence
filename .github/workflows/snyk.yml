@@ -51,6 +51,7 @@ jobs:
   
   code:
     runs-on: ubuntu-latest
+    if: github.repository == 'markdown-confluence/markdown-confluence'
     permissions:
       actions: read
       contents: read
@@ -80,6 +81,7 @@ jobs:
   
   container:
     runs-on: ubuntu-latest
+    if: github.repository == 'markdown-confluence/markdown-confluence'
     permissions:
       actions: read
       contents: read
@@ -123,6 +125,7 @@ jobs:
 
   sbom:
     runs-on: ubuntu-latest
+    if: github.repository == 'markdown-confluence/markdown-confluence'
     permissions:
       actions: read
       contents: read
@@ -145,6 +148,7 @@ jobs:
   
   check_jobs:
     runs-on: ubuntu-latest
+    if: github.repository == 'markdown-confluence/markdown-confluence'
     needs: [oss, code, container, sbom]
     steps:
       - name: Check if any previous jobs failed
