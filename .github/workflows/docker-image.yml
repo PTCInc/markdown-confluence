@@ -39,8 +39,8 @@ jobs:
           context: packages/cli
           push: true
           tags: |
-            ${{ env.PRIV_REGISTRY }}/${{ github.repository }}/$(basename $i):${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
+            ${{ env.PRIV_REGISTRY }}/atlas-devex/devops/markdown-confluence:${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
           labels: |
-            ${{ env.PRIV_REGISTRY }}/${{ github.repository }}/$(basename $i):${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
+            ${{ env.PRIV_REGISTRY }}/atlas-devex/devops/markdown-confluence:${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
           build-args: |
             TAG=${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
