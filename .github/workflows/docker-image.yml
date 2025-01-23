@@ -1,10 +1,10 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  push
+
+env:
+  PRIV_REGISTRY: sandbox.acr.io
 
 jobs:
 
@@ -21,10 +21,21 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
     - name: Latest NPM
       run: |
-        npm install --loglevel verbose
-        find . -name node_modules
-        ls
-        pwd
+        npm install
         npm run build
+    - name: Log in to the Container registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.PRIV_REGISTRY }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
     - name: Build the Docker image
-      run: docker build packages/cli --tag my-image-name:$(date +%s)
+      run: |
+        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          TAG=${{ github.ref_name }}
+        elif [[ "${{ github.ref }}" == refs/heads/main ]]; then
+          TAG=latest
+        else
+          TAG=${{ github.ref_name }}
+        fi
+        docker build packages/cli --tag $PRIV_REGISTRY/${{ github.repository }}}}/$(basename $i):$TAG
