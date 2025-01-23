@@ -27,15 +27,20 @@ jobs:
       uses: docker/login-action@v2
       with:
         registry: ${{ env.PRIV_REGISTRY }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-    - name: Build the Docker image
-      run: |
-        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-          TAG=${{ github.ref_name }}
-        elif [[ "${{ github.ref }}" == refs/heads/main ]]; then
-          TAG=latest
-        else
-          TAG=${{ github.ref_name }}
-        fi
-        docker build packages/cli --tag $PRIV_REGISTRY/${{ github.repository }}}}/$(basename $i):$TAG
+        username: ${{ secrets.PRIV_REGISTRY_USERNAME }}
+        password: ${{ secrets.PRIV_REGISTRY_PASSWORD }}
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+          context: packages/cli
+          push: true
+          tags: |
+            ${{ env.PRIV_REGISTRY }}/${{ github.repository }}/$(basename $i):${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
+          labels: |
+            ${{ env.PRIV_REGISTRY }}/${{ github.repository }}/$(basename $i):${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
+          build-args: |
+            TAG=${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
