@@ -4,7 +4,7 @@ COPY ./dist /app
 
 ENV NODE_OPTIONS=--enable-source-maps PUPPETEER_CACHE_DIR="/home/pptruser/.cache/puppeteer"
 
-MKDIR "/site"
+RUN mkdir "/site"
 WORKDIR "/site"
 
 CMD ["node", "/app/index.js"]
