@@ -26,7 +26,7 @@ export class KrokiRendererPlugin
 				node?.attrs?.["language"].startsWith("kroki-"),
 		);
 		const nodesToUpload = new Array<string>();
-		for (var count = 1; count < krokiNodes.length; count++) {
+		for (var count = 1; count <= krokiNodes.length; count++) {
 			nodesToUpload.push(
 				`${basename(adfFile.absoluteFilePath, ".md")}_${count}.svg`,
 			);
