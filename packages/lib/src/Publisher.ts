@@ -239,6 +239,7 @@ export class Publisher {
 			adfFile.absoluteFilePath,
 			currentAttachments,
 		);
+		const adfOriginal = adfFile.contents;
 		const adfToUpload = await executeADFProcessingPipeline(
 			this.adfProcessingPlugins,
 			adfFile,
@@ -297,7 +298,7 @@ export class Publisher {
 		};
 
 		if (
-			!adfEqual(existingPageData.adfContent, adfToUpload) ||
+			!adfEqual(adfOriginal, adfToUpload.contents) ||
 			!isEqual(existingPageDetails, newPageDetails)
 		) {
 			result.contentResult = "updated";
@@ -307,7 +308,7 @@ export class Publisher {
 				typeof value === "undefined" ? null : value;
 
 			console.log(JSON.stringify(existingPageData.adfContent, replacer));
-			console.log(JSON.stringify(adfToUpload, replacer));
+			console.log(JSON.stringify(adfToUpload.contents, replacer));
 
 			const updateContentDetails = {
 				...newPageDetails,
@@ -316,7 +317,7 @@ export class Publisher {
 				body: {
 					// eslint-disable-next-line @typescript-eslint/naming-convention
 					atlas_doc_format: {
-						value: JSON.stringify(adfToUpload),
+						value: JSON.stringify(adfToUpload.contents),
 						representation: "atlas_doc_format",
 					},
 				},

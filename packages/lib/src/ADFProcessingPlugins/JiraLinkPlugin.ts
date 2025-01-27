@@ -22,8 +22,8 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 		return items;
 	}
 
-	load(adf: JSONDocNode, _transformed: string): JSONDocNode {
-		let afterAdf = adf as ADFEntity;
+	load(adfFile: ConfluenceAdfFile, _transformed: string): ConfluenceAdfFile {
+		let afterAdf = adfFile.contents as ADFEntity;
 
 		afterAdf =
 			traverse(afterAdf, {
@@ -44,6 +44,7 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 				},
 			}) || afterAdf;
 
-		return afterAdf as JSONDocNode;
+		adfFile.contents = afterAdf as JSONDocNode;
+		return adfFile;
 	}
 }

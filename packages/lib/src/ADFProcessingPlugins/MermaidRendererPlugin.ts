@@ -83,10 +83,10 @@ export class MermaidRendererPlugin
 		return imageMap;
 	}
 	load(
-		adf: JSONDocNode,
+		adfFile: ConfluenceAdfFile,
 		imageMap: Record<string, UploadedImageData | null>,
-	): JSONDocNode {
-		let afterAdf = adf as ADFEntity;
+	): ConfluenceAdfFile {
+		let afterAdf = adfFile.contents as ADFEntity;
 
 		afterAdf =
 			traverse(afterAdf, {
@@ -129,6 +129,7 @@ export class MermaidRendererPlugin
 				},
 			}) || afterAdf;
 
-		return afterAdf as JSONDocNode;
+		adfFile.contents = afterAdf as JSONDocNode;
+		return adfFile;
 	}
 }
