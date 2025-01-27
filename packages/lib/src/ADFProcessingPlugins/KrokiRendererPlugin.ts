@@ -43,8 +43,6 @@ export class KrokiRendererPlugin
 			const uploadedContent = await supportFunctions.uploadFile(
 				imageFile,
 			);
-			console.log("Upload content", imageFile, " as ", uploadedContent);
-
 			imageMap = {
 				...imageMap,
 				[imageFile]: uploadedContent,
