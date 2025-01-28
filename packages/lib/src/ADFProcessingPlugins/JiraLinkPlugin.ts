@@ -7,8 +7,7 @@ export interface JiraLink {
 	issueId: string;
 }
 
-const JIRA_RE = "JIRA ?#? ?: ?([A-Z]+-[0-9]+)";
-const FULL_JIRA_RE = new RegExp(`^[:space"]?${JIRA_RE}[:space"]?$`);
+const JIRA_RE = "^(.*?)[:space:]?JIRA ?#? ?: ?([A-Z]+-[0-9]+)[:space:]?(.*?)$";
 export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 	constructor(private jiraUrl: string) {}
 
@@ -68,18 +67,20 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 				console.log("A:", nodeMatch.parent.node, nodeMatch.node, pos);
 				console.log("B:", pos, nodeMatch.parent.node);
 				// So we have a parent node whose children include a JIRA ref
-				console.log("1: ", FULL_JIRA_RE, nodeMatch.node);
+				console.log("1: ", nodeMatch.node);
 				const node = nodeMatch.node;
 				if (node.text) {
-					if (FULL_JIRA_RE.test(node.text)) {
+					if (!nodeMatch.matches[1] && !nodeMatch.matches[3]) {
 						nodeMatch.node.type = "inlineCard";
 						nodeMatch.node.attrs = {
-							url: `${this.jiraUrl}/browse/${nodeMatch.matches[1]}`,
+							url: `${this.jiraUrl}/browse/${nodeMatch.matches[2]}`,
 						};
 						delete nodeMatch.node.marks;
 						delete nodeMatch.node.text;
 						console.log(nodeMatch.node);
 						nodeMatch.parent.node.content[pos] = nodeMatch.node;
+					} else {
+						console.log("PARTIAL JIRA: ", node.text);
 					}
 				}
 			}
