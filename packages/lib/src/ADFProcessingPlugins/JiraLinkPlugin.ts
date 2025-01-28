@@ -8,7 +8,7 @@ export interface JiraLink {
 }
 
 const JIRA_RE = "JIRA ?#? ?: ?([A-Z]+-[0-9]+)";
-const FULL_JIRA_RE = `^[:space"]?${JIRA_RE}[:space"]?$`;
+const FULL_JIRA_RE = new RegExp(`^[:space"]?${JIRA_RE}[:space"]?$`);
 export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 	constructor(private jiraUrl: string) {}
 
@@ -25,8 +25,11 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 
 	load(adfFile: ConfluenceAdfFile, _transformed: string): ConfluenceAdfFile {
 		let afterAdf = adfFile.contents as ADFEntity;
-		const nodeMatches: Array<{ parent: EntityParent; node: ADFEntity }> =
-			[];
+		const nodeMatches: Array<{
+			parent: EntityParent;
+			node: ADFEntity;
+			matches: RegExpMatchArray;
+		}> = [];
 		afterAdf =
 			traverse(afterAdf, {
 				text: (node, parent) => {
@@ -36,7 +39,11 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 					if (!matches) return;
 					console.log("JIRA: found ", node.text);
 
-					nodeMatches.push({ parent: parent, node: node });
+					nodeMatches.push({
+						parent: parent,
+						node: node,
+						matches: matches,
+					});
 				},
 			}) || afterAdf;
 		for (const nodeMatch of nodeMatches) {
@@ -60,15 +67,14 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 				}
 				console.log("A:", nodeMatch.parent.node, nodeMatch.node, pos);
 				console.log("B:", pos, nodeMatch.parent.node);
-				// So we have a parent  node whose children include a JIRA ref
+				// So we have a parent node whose children include a JIRA ref
 				console.log("1: ", FULL_JIRA_RE, nodeMatch.node);
 				const node = nodeMatch.node;
 				if (node.text) {
-					const fullMatches = node.text.match(FULL_JIRA_RE);
-					if (fullMatches) {
+					if (FULL_JIRA_RE.test(node.text)) {
 						nodeMatch.node.type = "inlineCard";
 						nodeMatch.node.attrs = {
-							url: `${this.jiraUrl}/browse/${fullMatches[1]}`,
+							url: `${this.jiraUrl}/browse/${nodeMatch.matches[1]}`,
 						};
 						delete nodeMatch.node.marks;
 						delete nodeMatch.node.text;
