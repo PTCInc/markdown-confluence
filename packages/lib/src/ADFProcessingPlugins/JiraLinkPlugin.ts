@@ -7,8 +7,8 @@ export interface JiraLink {
 	issueId: string;
 }
 
-const JIRA_RE = "JIRA#? ?: ?([A-Z]+-[0-9]+)";
-const FULL_JIRA_RE = `^${JIRA_RE}$`;
+const JIRA_RE = "JIRA ?#? ?: ?([A-Z]+-[0-9]+)";
+const FULL_JIRA_RE = `^[:space"]?${JIRA_RE}[:space"]?$`;
 export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 	constructor(private jiraUrl: string) {}
 
