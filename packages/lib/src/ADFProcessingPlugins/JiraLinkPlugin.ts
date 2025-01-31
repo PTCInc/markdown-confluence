@@ -35,9 +35,7 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 				text: (node, parent) => {
 					if (!node.text) return;
 					const matches = node.text?.match(JIRA_RE);
-					console.log(matches);
 					if (!matches) return;
-					console.log("JIRA: found ", node.text);
 
 					nodeMatches.push({
 						parent: parent,
@@ -60,63 +58,54 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 						node.type === nodeMatch.node.type &&
 						node.text === nodeMatch.node.text
 					) {
-						console.log("MATCH", node, nodeCount);
 						pos = nodeCount;
 						break;
 					}
 				}
-				console.log("A:", nodeMatch.parent.node, nodeMatch.node, pos);
-				console.log("B:", pos, nodeMatch.parent.node);
-				// So we have a parent node whose children include a JIRA ref
-				console.log("1: ", nodeMatch.node);
-				const node = nodeMatch.node;
-				if (node.text) {
-					if (nodeMatch.parent.node) {
-						if (nodeMatch.matches[1]) {
-							nodeMatch.parent.node.content.splice(
-								pos++,
-								0,
-								text(nodeMatch.matches[1]),
-							);
-						}
-						nodeMatch.parent.node.content.splice(
-							pos++,
-							1,
-							inlineCard({
-								url: `${this.jiraUrl}/browse/${nodeMatch.matches[2]}`,
-							}),
-						);
-						if (nodeMatch.matches[3]) {
-							nodeMatch.parent.node.content.splice(
-								pos,
-								0,
-								text(nodeMatch.matches[3]),
-							);
-						}
-					}
-				}
+				this.insertJiraReference(
+					nodeMatch.parent.node.content as ADFEntity[],
+					nodeMatch.node,
+					nodeMatch.matches,
+					pos,
+				);
 			}
-		}
-		if (afterAdf.content && afterAdf.content[0]) {
-			console.log(afterAdf.content[0].content);
 		}
 		adfFile.contents = afterAdf as JSONDocNode;
 		return adfFile;
 	}
 
-	createJiraCard(
+	private insertJiraReference(
+		parent: ADFEntity[],
 		node: ADFEntity,
-		parentNodes: ADFEntity,
-		issueId: string,
+		matches: RegExpMatchArray,
 		pos: number,
 	) {
-		node.type = "inlineCard";
-		node.attrs = {
-			url: `${this.jiraUrl}/browse/${issueId}`,
-		};
-		delete node.marks;
-		delete node.text;
-		console.log(node);
-		parentNodes[pos] = node;
+		// So we have a parent node whose children include a JIRA ref
+		if (node.text) {
+			if (parent) {
+				if (matches[1]) {
+					parent.splice(pos++, 0, text(matches[1]));
+				}
+				parent.splice(
+					pos++,
+					1,
+					inlineCard({
+						url: `${this.jiraUrl}/browse/${matches[2]}`,
+					}),
+				);
+				if (matches[3]) {
+					parent.splice(pos++, 0, text(matches[3]));
+					const newMatches = matches[3].match(JIRA_RE);
+					if (newMatches) {
+						this.insertJiraReference(
+							parent,
+							parent[pos - 1] as ADFEntity,
+							newMatches,
+							pos - 1,
+						);
+					}
+				}
+			}
+		}
 	}
 }
