@@ -77,14 +77,9 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 						nodeMatch.matches[2] &&
 						nodeMatch.parent.node
 					) {
-						nodeMatch.node.type = "inlineCard";
-						nodeMatch.node.attrs = {
+						nodeMatch.parent.node.content[pos] = inlineCard({
 							url: `${this.jiraUrl}/browse/${nodeMatch.matches[2]}`,
-						};
-						delete nodeMatch.node.marks;
-						delete nodeMatch.node.text;
-						console.log(nodeMatch.node);
-						nodeMatch.parent.node.content[pos] = nodeMatch.node;
+						});
 					} else if (nodeMatch.matches[1] && nodeMatch.matches[3]) {
 						const newNode = text(nodeMatch.matches[1]);
 						const newNode2 = inlineCard({
