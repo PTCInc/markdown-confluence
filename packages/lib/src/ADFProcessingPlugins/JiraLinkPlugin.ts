@@ -3,6 +3,7 @@ import { JSONDocNode } from "@atlaskit/editor-json-transformer";
 import { ADFProcessingPlugin, PublisherFunctions } from "./types";
 import { ADFEntity, EntityParent } from "@atlaskit/adf-utils/types";
 import { ConfluenceAdfFile } from "src/Publisher";
+import { text, inlineCard } from "@atlaskit/adf-utils/builders";
 export interface JiraLink {
 	issueId: string;
 }
@@ -70,7 +71,12 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 				console.log("1: ", nodeMatch.node);
 				const node = nodeMatch.node;
 				if (node.text) {
-					if (!nodeMatch.matches[1] && !nodeMatch.matches[3]) {
+					if (
+						!nodeMatch.matches[1] &&
+						!nodeMatch.matches[3] &&
+						nodeMatch.matches[2] &&
+						nodeMatch.parent.node
+					) {
 						nodeMatch.node.type = "inlineCard";
 						nodeMatch.node.attrs = {
 							url: `${this.jiraUrl}/browse/${nodeMatch.matches[2]}`,
@@ -79,8 +85,19 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 						delete nodeMatch.node.text;
 						console.log(nodeMatch.node);
 						nodeMatch.parent.node.content[pos] = nodeMatch.node;
-					} else {
-						console.log("PARTIAL JIRA: ", node.text);
+					} else if (nodeMatch.matches[1] && nodeMatch.matches[3]) {
+						const newNode = text(nodeMatch.matches[1]);
+						const newNode2 = inlineCard({
+							url: `${this.jiraUrl}/browse/${nodeMatch.matches[2]}`,
+						});
+						const newNode3 = text(nodeMatch.matches[3]);
+						nodeMatch.parent.node.content.splice(
+							pos,
+							1,
+							newNode,
+							newNode2,
+							newNode3,
+						);
 					}
 				}
 			}
@@ -90,5 +107,21 @@ export class JiraLinkPlugin implements ADFProcessingPlugin<string, string> {
 		}
 		adfFile.contents = afterAdf as JSONDocNode;
 		return adfFile;
+	}
+
+	createJiraCard(
+		node: ADFEntity,
+		parentNodes: ADFEntity,
+		issueId: string,
+		pos: number,
+	) {
+		node.type = "inlineCard";
+		node.attrs = {
+			url: `${this.jiraUrl}/browse/${issueId}`,
+		};
+		delete node.marks;
+		delete node.text;
+		console.log(node);
+		parentNodes[pos] = node;
 	}
 }
