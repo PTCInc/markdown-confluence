@@ -13,6 +13,7 @@ export class EnvironmentVariableSettingsLoader extends SettingsLoader {
 	loadPartial(): Partial<ConfluenceSettings> {
 		return {
 			...this.getValue("confluenceBaseUrl", "CONFLUENCE_BASE_URL"),
+			...this.getValue("jiraUrl", "JIRA_BASE_URL"),
 			...this.getValue("confluenceParentId", "CONFLUENCE_PARENT_ID"),
 			...this.getValue("atlassianUserName", "ATLASSIAN_USERNAME"),
 			...this.getValue("atlassianApiToken", "ATLASSIAN_API_TOKEN"),
