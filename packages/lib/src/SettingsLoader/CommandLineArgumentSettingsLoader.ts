@@ -20,6 +20,12 @@ export class CommandLineArgumentSettingsLoader extends SettingsLoader {
 				type: "string",
 				demandOption: false,
 			})
+			.option("jiraUrl", {
+				alias: "j",
+				describe: "Jira base URL",
+				type: "string",
+				demandOption: false,
+			})
 			.option("parentId", {
 				alias: "p",
 				describe: "Confluence parent ID",
